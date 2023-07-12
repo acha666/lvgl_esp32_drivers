@@ -23,7 +23,7 @@ extern "C" {
 /*********************
  *      DEFINES
  *********************/
-#define DISP_BUF_SIZE (LV_HOR_RES_MAX * 40)
+#define DISP_BUF_SIZE (LV_HOR_RES_MAX * LV_VER_RES_MAX)
 
 #define ST7735S_DC       CONFIG_LV_DISP_PIN_DC
 #define ST7735S_RST      CONFIG_LV_DISP_PIN_RST
@@ -37,8 +37,8 @@ extern "C" {
 //      https://github.com/adafruit/Adafruit-ST7735-Library
 //
 #define ST7735_GREENTAB160x80 // For 160 x 80 display (BGR, inverted, 26 / 1 offset)
-#define COLSTART            26
-#define ROWSTART            1
+#define COLSTART            23 //26
+#define ROWSTART            0  //1
 
 // Delay between some initialisation commands
 #define TFT_INIT_DELAY      0x80
