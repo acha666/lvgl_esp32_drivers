@@ -16,7 +16,7 @@
 /*********************
  *      DEFINES
  *********************/
- #define TAG "GC9A01"
+#define TAG "GC9A01"
 
 /**********************
  *      TYPEDEFS
@@ -24,8 +24,8 @@
 
 /*The LCD needs a bunch of command/argument values to be initialized. They are stored in this struct. */
 typedef struct {
-    uint8_t cmd;
-    uint8_t data[16];
+	uint8_t cmd;
+	uint8_t data[16];
     uint8_t databytes; //No of data in data; bit 7 = delay after set; 0xFF = end of cmds.
 } lcd_init_cmd_t;
 
@@ -53,7 +53,7 @@ static void GC9A01_send_color(void * data, uint16_t length);
 void GC9A01_init(void)
 {
 	lcd_init_cmd_t GC_init_cmds[]={
-////////////////////////////////////////////
+		////////////////////////////////////////////
 		{0xEF, {0}, 0},
 		{0xEB, {0x14}, 1},
 
@@ -94,7 +94,7 @@ void GC9A01_init(void)
 		{0xAE, {0x77}, 1},
 		{0xCD, {0x63}, 1},
 		{0x70, {0x07, 0x07, 0x04, 0x0E, 0x0F, 0x09, 0x07, 0X08, 0x03}, 9},
-		{0xE8, {0x34}, 1},
+		{0xE8, {0x14}, 1},
 		{0x62, {0x18, 0x0D, 0x71, 0xED, 0x70, 0x70, 0x18, 0X0F, 0x71, 0xEF, 0x70, 0x70}, 12},
 		{0x63, {0x18, 0x11, 0x71, 0xF1, 0x70, 0x70, 0x18, 0X13, 0x71, 0xF3, 0x70, 0x70}, 12},
 		{0x64, {0x28, 0x29, 0xF1, 0x01, 0xF1, 0x00, 0x07}, 7},
@@ -107,16 +107,16 @@ void GC9A01_init(void)
 		{0x11, {0}, 0x80},	//0x80 delay flag
 		{0x29, {0}, 0x80},	//0x80 delay flag
 		{0, {0}, 0xff},		//init end flag
-////////////////////////////////////////////
+						   ////////////////////////////////////////////
 
 	};
 
 	//Initialize non-SPI GPIOs
-    gpio_pad_select_gpio(GC9A01_DC);
+	esp_rom_gpio_pad_select_gpio(GC9A01_DC);
 	gpio_set_direction(GC9A01_DC, GPIO_MODE_OUTPUT);
 
 #if GC9A01_USE_RST
-    gpio_pad_select_gpio(GC9A01_RST);
+	esp_rom_gpio_pad_select_gpio(GC9A01_RST);
 	gpio_set_direction(GC9A01_RST, GPIO_MODE_OUTPUT);
 
 	//Reset the display
@@ -163,10 +163,10 @@ void GC9A01_flush(lv_disp_drv_t * drv, const lv_area_t * area, lv_color_t * colo
 
 	/*Page addresses*/
 	GC9A01_send_cmd(0x2B);				//0x2B
-	data[0] = (area->y1 >> 8) & 0xFF;
-	data[1] = area->y1 & 0xFF;
-	data[2] = (area->y2 >> 8) & 0xFF;
-	data[3] = area->y2 & 0xFF;
+	data[0] = ((area->y1 + 60) >> 8) & 0xFF; // For LH105T-IG01 Screen, Y offset = 60
+	data[1] = (area->y1 + 60) & 0xFF;
+	data[2] = ((area->y2 + 60) >> 8) & 0xFF;
+	data[3] = (area->y2 + 60) & 0xFF;
 	GC9A01_send_data(data, 4);
 
 	/*Memory write*/
@@ -199,45 +199,45 @@ void GC9A01_sleep_out()
 
 static void GC9A01_send_cmd(uint8_t cmd)
 {
-    disp_wait_for_pending_transactions();
+	disp_wait_for_pending_transactions();
     gpio_set_level(GC9A01_DC, 0);	 /*Command mode*/
-    disp_spi_send_data(&cmd, 1);
+	disp_spi_send_data(&cmd, 1);
 }
 
 static void GC9A01_send_data(void * data, uint16_t length)
 {
-    disp_wait_for_pending_transactions();
+	disp_wait_for_pending_transactions();
     gpio_set_level(GC9A01_DC, 1);	 /*Data mode*/
-    disp_spi_send_data(data, length);
+	disp_spi_send_data(data, length);
 }
 
 static void GC9A01_send_color(void * data, uint16_t length)
 {
-    disp_wait_for_pending_transactions();
+	disp_wait_for_pending_transactions();
     gpio_set_level(GC9A01_DC, 1);   /*Data mode*/
-    disp_spi_send_colors(data, length);
+	disp_spi_send_colors(data, length);
 }
 
 static void GC9A01_set_orientation(uint8_t orientation)
 {
-    // ESP_ASSERT(orientation < 4);
+	// ESP_ASSERT(orientation < 4);
 
-    const char *orientation_str[] = {
+	const char *orientation_str[] = {
         "PORTRAIT", "PORTRAIT_INVERTED", "LANDSCAPE", "LANDSCAPE_INVERTED"
     };
 
-    ESP_LOGI(TAG, "Display orientation: %s", orientation_str[orientation]);
+	ESP_LOGI(TAG, "Display orientation: %s", orientation_str[orientation]);
 
 #if defined CONFIG_LV_PREDEFINED_DISPLAY_M5STACK
     uint8_t data[] = {0x68, 0x68, 0x08, 0x08};  ///
 #elif defined (CONFIG_LV_PREDEFINED_DISPLAY_WROVER4)
-    uint8_t data[] = {0x4C, 0x88, 0x28, 0xE8}; ///
+	uint8_t data[] = {0x4C, 0x88, 0x28, 0xE8}; ///
 #elif defined (CONFIG_LV_PREDEFINED_DISPLAY_NONE)
     uint8_t data[] = {0x08, 0xC8, 0x68, 0xA8}; ///ggggg
 #endif
 
-    ESP_LOGI(TAG, "0x36 command value: 0x%02X", data[orientation]);
+	ESP_LOGI(TAG, "0x36 command value: 0x%02X", data[orientation]);
 
-    GC9A01_send_cmd(0x36);
+	GC9A01_send_cmd(0x36);
     GC9A01_send_data((void *) &data[orientation], 1);
 }
