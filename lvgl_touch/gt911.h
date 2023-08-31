@@ -33,7 +33,7 @@
 extern "C" {
 #endif
 
-#define GT911_I2C_SLAVE_ADDR   0x5D
+#define GT911_I2C_SLAVE_ADDR   0x14
 
 #define GT911_PRODUCT_ID_LEN   4
 
