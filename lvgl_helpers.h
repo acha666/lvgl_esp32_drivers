@@ -23,7 +23,8 @@ extern "C"
 /*********************
  *      DEFINES
  *********************/
-
+#define LV_HOR_RES_MAX 240
+#define LV_VER_RES_MAX 120
 /* DISP_BUF_SIZE value doesn't have an special meaning, but it's the size
  * of the buffer(s) passed to LVGL as display buffers. The default values used
  * were the values working for the contributor of the display controller.
@@ -44,7 +45,7 @@ extern "C"
 #if defined(CONFIG_LV_TFT_DISPLAY_CONTROLLER_ST7789)
 #define DISP_BUF_SIZE (LV_HOR_RES_MAX * 40)
 #elif defined CONFIG_LV_TFT_DISPLAY_CONTROLLER_ST7735S
-#define DISP_BUF_SIZE (LV_HOR_RES_MAX * 40)
+#define DISP_BUF_SIZE  (LV_HOR_RES_MAX * LV_VER_RES_MAX)
 #elif defined CONFIG_LV_TFT_DISPLAY_CONTROLLER_ST7796S
 #define DISP_BUF_SIZE (LV_HOR_RES_MAX * 40)
 #elif defined CONFIG_LV_TFT_DISPLAY_CONTROLLER_HX8357
@@ -71,10 +72,10 @@ extern "C"
 #elif defined(CONFIG_LV_TFT_DISPLAY_CONTROLLER_IL3820)
 #define DISP_BUF_SIZE (LV_VER_RES_MAX * IL3820_COLUMNS)
 #elif defined CONFIG_LV_TFT_DISPLAY_CONTROLLER_RA8875
-#define DISP_BUF_SIZE (LV_HOR_RES_MAX * 40)
-#elif defined(CONFIG_LV_TFT_DISPLAY_CONTROLLER_GC9A01)
-#define DISP_BUF_SIZE (LV_HOR_RES_MAX * 40)
-#elif defined(CONFIG_LV_TFT_DISPLAY_CONTROLLER_JD79653A)
+#define DISP_BUF_SIZE  (LV_HOR_RES_MAX * 40)
+#elif defined (CONFIG_LV_TFT_DISPLAY_CONTROLLER_GC9A01)
+#define DISP_BUF_SIZE  (LV_HOR_RES_MAX * LV_VER_RES_MAX)
+#elif defined (CONFIG_LV_TFT_DISPLAY_CONTROLLER_JD79653A)
 #define DISP_BUF_SIZE ((LV_VER_RES_MAX * LV_VER_RES_MAX) / 8) // 5KB
 #elif defined(CONFIG_LV_TFT_DISPLAY_CONTROLLER_UC8151D)
 #define DISP_BUF_SIZE ((LV_VER_RES_MAX * LV_VER_RES_MAX) / 8) // 2888 bytes
